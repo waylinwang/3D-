@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Scene } from './components/Scene';
 import { UI } from './components/UI';
@@ -33,7 +34,7 @@ const App: React.FC = () => {
     setParticleColor(color);
   };
 
-  // Helper to generate non-repeating (as much as possible) queue
+  // Generate a random queue of 10 actions from the larger pool
   const generateQueue = () => {
     const allActions = [
       ActionType.RAISE_LEFT, 
@@ -43,14 +44,21 @@ const App: React.FC = () => {
       ActionType.THUMBS_UP,
       ActionType.OK_SIGN,
       ActionType.FIST,
-      ActionType.SPIDERMAN
+      ActionType.SPIDERMAN,
+      ActionType.POINT,
+      ActionType.CALL_ME,
+      ActionType.PALM,
+      ActionType.THREE,
+      ActionType.FOUR,
+      ActionType.PINKY,
+      ActionType.PISTOL
     ];
-    // Shuffle
-    let shuffled = [...allActions].sort(() => Math.random() - 0.5);
-    // We need 10 rounds, but have 8 unique actions. 
-    // Add 2 random ones to the end, ensuring no immediate repeat if possible
-    const extra = allActions.sort(() => Math.random() - 0.5).slice(0, TOTAL_ROUNDS - allActions.length);
-    return [...shuffled, ...extra];
+    
+    // Shuffle the entire pool
+    const shuffled = [...allActions].sort(() => Math.random() - 0.5);
+    
+    // Select the first 10 for this game session
+    return shuffled.slice(0, TOTAL_ROUNDS);
   };
 
   const startGame = useCallback(() => {
@@ -131,6 +139,27 @@ const App: React.FC = () => {
         case ActionType.SPIDERMAN:
             if (gestureState.isSpiderman) isActionMet = true;
             break;
+        case ActionType.POINT:
+            if (gestureState.isPointing) isActionMet = true;
+            break;
+        case ActionType.CALL_ME:
+            if (gestureState.isCallMe) isActionMet = true;
+            break;
+        case ActionType.PALM:
+            if (gestureState.isPalm) isActionMet = true;
+            break;
+        case ActionType.THREE:
+            if (gestureState.isThree) isActionMet = true;
+            break;
+        case ActionType.FOUR:
+            if (gestureState.isFour) isActionMet = true;
+            break;
+        case ActionType.PINKY:
+            if (gestureState.isPinky) isActionMet = true;
+            break;
+        case ActionType.PISTOL:
+            if (gestureState.isPistol) isActionMet = true;
+            break;
     }
 
     if (isActionMet) {
@@ -157,17 +186,20 @@ const App: React.FC = () => {
 
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden select-none">
-      {/* Video Preview */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col items-end pointer-events-none">
+      {/* Video Preview - Positioned to avoid UI overlap. 
+          Moved down (top-16) on mobile to clear header. 
+          Moved left slightly to avoid scrollbars/edge. 
+      */}
+      <div className="absolute top-20 right-4 md:top-20 md:right-6 z-20 flex flex-col items-end pointer-events-none">
         <video 
           ref={videoRef} 
-          className="w-48 rounded-lg border border-white/20 opacity-60 scale-x-[-1] shadow-2xl transition-opacity hover:opacity-100 pointer-events-auto mb-2" 
+          className="w-28 md:w-48 rounded-lg border border-white/20 opacity-70 scale-x-[-1] shadow-2xl transition-opacity hover:opacity-100 pointer-events-auto mb-2 bg-black/50" 
           playsInline 
           muted 
           autoPlay 
         />
-        <div className="bg-black/50 backdrop-blur px-3 py-1 rounded text-xs text-gray-400 border border-white/10">
-           摄像头画面 (镜像)
+        <div className="bg-black/50 backdrop-blur px-2 py-0.5 rounded text-[10px] text-gray-400 border border-white/10 hidden md:block">
+           摄像头画面
         </div>
       </div>
 

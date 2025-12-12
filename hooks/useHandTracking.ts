@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { HandGestureState } from '../types';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
@@ -16,6 +17,13 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
     isOkSign: false,
     isFist: false,
     isSpiderman: false,
+    isPointing: false,
+    isCallMe: false,
+    isPalm: false,
+    isThree: false,
+    isFour: false,
+    isPinky: false,
+    isPistol: false,
   });
   const [error, setError] = useState<string | null>(null);
   
@@ -142,6 +150,13 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
     let isOkSign = false;
     let isFist = false;
     let isSpiderman = false;
+    let isPointing = false;
+    let isCallMe = false;
+    let isPalm = false;
+    let isThree = false;
+    let isFour = false;
+    let isPinky = false;
+    let isPistol = false;
 
     // 1. Clapping Detection (Two hands close together)
     if (count === 2) {
@@ -179,7 +194,6 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
         }
 
         // Thumbs Up: Thumb UP, others DOWN
-        // Also check if thumb tip is physically higher (lower y) than wrist significantly
         if (thumbOut && !indexUp && !middleUp && !ringUp && !pinkyUp) {
              // Ensure thumb is pointing UP relative to screen
              if (hand[4].y < hand[3].y) isThumbsUp = true;
@@ -192,7 +206,6 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
         }
 
         // Fist: All fingers DOWN
-        // Thumb might be tucked or out, but main 4 fingers must be curled
         if (!indexUp && !middleUp && !ringUp && !pinkyUp) {
             // Extra check: Fingertips are close to wrist
             const tipWristDist = Math.hypot(hand[8].x - wrist.x, hand[8].y - wrist.y);
@@ -202,6 +215,42 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
         // Spiderman (Rock On): Index & Pinky UP, Middle & Ring DOWN
         if (indexUp && !middleUp && !ringUp && pinkyUp) {
             isSpiderman = true;
+        }
+
+        // Point (Index Only): Index UP, others DOWN (Thumb tucked)
+        if (indexUp && !middleUp && !ringUp && !pinkyUp && !thumbOut) {
+            isPointing = true;
+        }
+
+        // Pistol/Gun: Thumb & Index UP, others DOWN
+        if (thumbOut && indexUp && !middleUp && !ringUp && !pinkyUp) {
+            isPistol = true;
+        }
+
+        // Call Me (Thumb & Pinky): Thumb & Pinky UP, others DOWN
+        if (thumbOut && !indexUp && !middleUp && !ringUp && pinkyUp) {
+            isCallMe = true;
+        }
+
+        // Palm (Five): All 5 fingers UP
+        if (thumbOut && indexUp && middleUp && ringUp && pinkyUp) {
+            isPalm = true;
+        }
+
+        // Three (W style): Index, Middle, Ring UP
+        if (indexUp && middleUp && ringUp && !pinkyUp) {
+            // Usually thumb is holding pinky, so thumb might not be extended
+             isThree = true;
+        }
+
+        // Four: All except thumb UP
+        if (!thumbOut && indexUp && middleUp && ringUp && pinkyUp) {
+            isFour = true;
+        }
+
+        // Pinky Promise: Only Pinky UP
+        if (!thumbOut && !indexUp && !middleUp && !ringUp && pinkyUp) {
+            isPinky = true;
         }
     }
 
@@ -217,7 +266,14 @@ export const useHandTracking = (videoRef: React.RefObject<HTMLVideoElement>) => 
       isThumbsUp,
       isOkSign,
       isFist,
-      isSpiderman
+      isSpiderman,
+      isPointing,
+      isCallMe,
+      isPalm,
+      isThree,
+      isFour,
+      isPinky,
+      isPistol,
     });
   };
 

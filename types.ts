@@ -1,3 +1,4 @@
+
 export enum ShapeType {
   HEART = '爱心',
   FLOWER = '花朵',
@@ -15,8 +16,16 @@ export enum ActionType {
   VICTORY = '比个耶 (剪刀手)',
   THUMBS_UP = '点个赞 (大拇指)',
   OK_SIGN = 'OK 手势',
-  FIST = '握紧拳头',
+  FIST = '握紧拳头 (石头)',
   SPIDERMAN = '摇滚/蜘蛛侠',
+  POINT = '伸出食指 (1)',
+  CALL_ME = '打电话 (6)',
+  // New Actions for the Pool
+  PALM = '张开手掌 (布/5)',
+  THREE = '数字 3 (W手势)',
+  FOUR = '数字 4',
+  PINKY = '伸出小指 (拉勾)',
+  PISTOL = '手枪手势',
 }
 
 export interface ParticleConfig {
@@ -39,4 +48,12 @@ export interface HandGestureState {
   isOkSign: boolean;
   isFist: boolean;
   isSpiderman: boolean;
+  isPointing: boolean;
+  isCallMe: boolean;
+  // New States
+  isPalm: boolean;
+  isThree: boolean;
+  isFour: boolean;
+  isPinky: boolean;
+  isPistol: boolean;
 }
